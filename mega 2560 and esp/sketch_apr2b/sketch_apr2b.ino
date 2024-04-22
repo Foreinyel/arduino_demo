@@ -9,7 +9,7 @@
 // CRC8 crc;
 
 static constexpr size_t BUFFER_SIZE = 8;
-uint8_t tx_buf[BUFFER_SIZE]{ 6, 45, 3, 5, 4, 5, 7, 34 };
+// uint8_t tx_buf[BUFFER_SIZE]{ 6, 45, 3, 5, 4, 5, 7, 34 };
 uint8_t rx_buf[BUFFER_SIZE];
 
 void setup() {
@@ -46,17 +46,17 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  // uint8_t tx_buf[BUFFER_SIZE]{ 7, 3, 3, 4, 5, 6, 7, 8 };
+  uint8_t tx_buf[BUFFER_SIZE]{ 6, 45, 3, 5, 4, 5, 7, 34 };
+
 
 
   // 第一种方式计算crc8
-  const char* text = "This";
-  const uint8_t text_len = strlen(text);
-  uint8_t text_crc8 = calcCRC8((uint8_t*)text, strlen(text));
+  // const char* text = "This";
+  // const uint8_t text_len = strlen(text);
+  // uint8_t text_crc8 = calcCRC8((uint8_t*)text, strlen(text));
 
-  for (int i = 0; i < text_len; i++) {
-    // SPI.transfer(text[i]);
-  }
+  // for (int i = 0; i < text_len; i++) {
+  // }
 
   // Serial.println(text_crc8);
 
@@ -69,18 +69,27 @@ void loop() {
 
   // initializeBuffers(tx_buf, rx_buf, BUFFER_SIZE);
 
-  SPI.beginTransaction(SPISettings(2000000, MSBFIRST, SPI_MODE1));
+  SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE1));
 
   // 选择 ESP32 从机
   digitalWrite(SS, LOW);
 
+
   for (int i = 0; i < BUFFER_SIZE; i++) {
     uint8_t ack = SPI.transfer(tx_buf[i]);
-    Serial.println(ack);
+    Serial.print(ack);
+    Serial.print(" ");
   }
-
+  Serial.println();
 
   // SPI.transfer(tx_buf, BUFFER_SIZE);
+
+
+  // for (int i = 0; i < BUFFER_SIZE; i++) {
+  //   Serial.print(tx_buf[i]);
+  //   Serial.print(" ");
+  // }
+  // Serial.println();
 
   // 向 ESP32 发送数据
 
@@ -88,14 +97,6 @@ void loop() {
 
   // SPI.transfer(text, strlen(text));
   // SPI.transfer(text_crc8);
-
-  // uint8_t data = 55;
-  // SPI.transfer(data);
-  // SPI.transfer(data);
-
-  // uint8_t ack = SPI.transfer(0x00);
-  // Serial.print("ack: ");
-  // Serial.println(ack);
 
   // 接收应答和 CRC 校验码
   // uint8_t ack = SPI.transfer(0x00);
@@ -117,11 +118,9 @@ void loop() {
 
   // 取消选择 ESP32 从机
   digitalWrite(SS, HIGH);
+
+
   SPI.endTransaction();
-
-
-  for (int i = 0; i < 57; i++) {
-  }
 
   delay(3000);
 }
